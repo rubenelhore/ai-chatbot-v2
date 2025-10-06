@@ -133,7 +133,7 @@ export async function createChat(data: {
       ${data.conversation_id || null},
       ${data.query},
       ${data.response},
-      ${data.document_ids},
+      ${JSON.stringify(data.document_ids)},
       ${data.sources ? JSON.stringify(data.sources) : null}
     )
     RETURNING *
