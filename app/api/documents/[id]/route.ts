@@ -6,7 +6,7 @@ import { deleteVectors } from '@/lib/ai';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth0.getSession();
@@ -22,7 +22,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Failed to sync user' }, { status: 500 });
     }
 
-    const documentId = params.id;
+    const { id: documentId } = await params;
 
     // Get document to verify ownership and get file path
     const document = await getDocumentById(documentId);

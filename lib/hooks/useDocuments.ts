@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@auth0/nextjs-auth0';
 
 export interface Document {
@@ -27,7 +27,7 @@ export const useDocuments = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchDocuments = async () => {
+  const fetchDocuments = useCallback(async () => {
     if (!user) {
       setDocuments([]);
       setIsLoading(false);
@@ -46,7 +46,7 @@ export const useDocuments = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchDocuments();
