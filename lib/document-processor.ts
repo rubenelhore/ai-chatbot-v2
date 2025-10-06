@@ -1,5 +1,5 @@
 import mammoth from 'mammoth';
-import pdfParse from 'pdf-parse';
+import * as pdfParse from 'pdf-parse';
 
 export async function extractTextFromFile(
   buffer: Buffer,
@@ -9,7 +9,8 @@ export async function extractTextFromFile(
 
   switch (fileExtension) {
     case 'pdf':
-      const pdfData = await pdfParse(buffer);
+      const pdf = pdfParse as any;
+      const pdfData = await pdf.default(buffer);
       return pdfData.text;
 
     case 'docx':
