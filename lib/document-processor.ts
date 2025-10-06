@@ -9,6 +9,7 @@ export async function extractTextFromFile(
 
   switch (fileExtension) {
     case 'pdf':
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pdf = pdfParse as any;
       const pdfData = await pdf.default(buffer);
       return pdfData.text;

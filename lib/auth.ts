@@ -4,7 +4,12 @@ import { sql } from '@vercel/postgres';
 export { auth0 };
 
 // Custom callback to sync Auth0 user with database
-export async function syncUserWithDatabase(user: any) {
+export async function syncUserWithDatabase(user: {
+  email?: string;
+  name?: string;
+  picture?: string;
+  sub?: string;
+}) {
   if (!user?.email) return null;
 
   try {

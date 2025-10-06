@@ -36,7 +36,7 @@ export default function Home() {
       try {
         await uploadDocument(file);
         toast.success(`${file.name} subido exitosamente`);
-      } catch (error) {
+      } catch {
         toast.error('Error al subir el archivo');
       }
     },

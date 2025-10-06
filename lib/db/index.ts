@@ -35,7 +35,12 @@ export interface Chat {
   query: string;
   response: string;
   document_ids: string[];
-  sources?: any;
+  sources?: {
+    documentId: string;
+    chunkIndex: number;
+    score: number;
+    text: string;
+  }[];
   created_at: Date;
   updated_at: Date;
 }
@@ -114,7 +119,12 @@ export async function createChat(data: {
   query: string;
   response: string;
   document_ids: string[];
-  sources?: any;
+  sources?: {
+    documentId: string;
+    chunkIndex: number;
+    score: number;
+    text: string;
+  }[];
 }): Promise<Chat> {
   const result = await sql<Chat>`
     INSERT INTO chats (user_id, conversation_id, query, response, document_ids, sources)

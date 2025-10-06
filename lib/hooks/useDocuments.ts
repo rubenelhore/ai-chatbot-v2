@@ -52,17 +52,18 @@ export const useDocuments = () => {
     fetchDocuments();
 
     // Poll for updates every 5 seconds when there are processing documents
+    const hasProcessing = documents.some(
+      (doc) => doc.status === 'uploading' || doc.status === 'processing'
+    );
+
     const interval = setInterval(() => {
-      const hasProcessing = documents.some(
-        (doc) => doc.status === 'uploading' || doc.status === 'processing'
-      );
       if (hasProcessing) {
         fetchDocuments();
       }
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [user, documents.some(d => d.status === 'uploading' || d.status === 'processing')]);
+  }, [user, documents, fetchDocuments]);
 
   const uploadDocument = async (file: File) => {
     setIsUploading(true);
