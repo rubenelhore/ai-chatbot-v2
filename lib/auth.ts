@@ -1,5 +1,5 @@
 import { auth0 } from './auth0';
-import { sql } from '@vercel/postgres';
+import { sql } from './db/postgres';
 
 export { auth0 };
 

@@ -5,7 +5,7 @@ import { createChat } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth0.getSession(request);
+    const session = await auth0.getSession();
 
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
