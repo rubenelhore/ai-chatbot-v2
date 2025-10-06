@@ -1,13 +1,27 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 import OpenAI from 'openai';
 
-const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY!,
-});
+// Lazy initialization to avoid errors during build time
+let pinecone: Pinecone | null = null;
+let openai: OpenAI | null = null;
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+function getPinecone() {
+  if (!pinecone) {
+    pinecone = new Pinecone({
+      apiKey: process.env.PINECONE_API_KEY!,
+    });
+  }
+  return pinecone;
+}
+
+function getOpenAI() {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    });
+  }
+  return openai;
+}
 
 export const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME || 'document-chatbot';
 
@@ -16,7 +30,8 @@ export const PINECONE_INDEX_NAME = process.env.PINECONE_INDEX_NAME || 'document-
  * This model provides 1536 dimensions and is cost-effective
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
+  const client = getOpenAI();
+  const response = await client.embeddings.create({
     model: 'text-embedding-3-small',
     input: text,
   });
@@ -33,7 +48,8 @@ export async function upsertVectors(
   chunks: string[],
   fileName: string
 ): Promise<number> {
-  const index = pinecone.Index(PINECONE_INDEX_NAME);
+  const client = getPinecone();
+  const index = client.Index(PINECONE_INDEX_NAME);
   const namespace = `user-${userId}`;
 
   const vectors = [];
@@ -75,7 +91,8 @@ export async function deleteVectors(
   documentId: string,
   chunkCount: number
 ): Promise<void> {
-  const index = pinecone.Index(PINECONE_INDEX_NAME);
+  const client = getPinecone();
+  const index = client.Index(PINECONE_INDEX_NAME);
   const namespace = `user-${userId}`;
 
   const vectorIds = [];
@@ -97,7 +114,8 @@ export async function queryVectors(
   documentIds: string[],
   topK: number = 5
 ) {
-  const index = pinecone.Index(PINECONE_INDEX_NAME);
+  const client = getPinecone();
+  const index = client.Index(PINECONE_INDEX_NAME);
   const namespace = `user-${userId}`;
 
   const embedding = await generateEmbedding(query);
@@ -121,7 +139,8 @@ export async function generateChatResponse(
   context: string,
   query: string
 ): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const client = getOpenAI();
+  const completion = await client.chat.completions.create({
     model: 'gpt-4-turbo-preview',
     messages: [
       {
@@ -158,7 +177,8 @@ export async function generateChatResponseStream(
   context: string,
   query: string
 ) {
-  const stream = await openai.chat.completions.create({
+  const client = getOpenAI();
+  const stream = await client.chat.completions.create({
     model: 'gpt-4-turbo-preview',
     messages: [
       {
