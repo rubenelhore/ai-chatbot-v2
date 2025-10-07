@@ -17,8 +17,10 @@ function getPool() {
 }
 
 // Template literal tag function that mimics @vercel/postgres sql API
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function sql<T = any>(
   strings: TemplateStringsArray,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...values: any[]
 ): Promise<{ rows: T[]; rowCount: number | null }> {
   if (isVercelPostgres) {
@@ -34,6 +36,7 @@ export async function sql<T = any>(
 
     // Build the query from template literal
     let query = strings[0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any[] = [];
 
     for (let i = 0; i < values.length; i++) {

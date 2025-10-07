@@ -9,6 +9,7 @@ export async function extractTextFromFile(
   switch (fileExtension) {
     case 'pdf':
       // Dynamic import for pdf-parse (CommonJS module)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pdfParseModule = await import('pdf-parse') as any;
       // Use the 'pdf' named export
       const pdfData = await pdfParseModule.pdf(buffer);
