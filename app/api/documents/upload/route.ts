@@ -51,9 +51,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload to Vercel Blob Storage
+    console.log('Attempting to upload to Vercel Blob...');
+    console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN);
+
     const blob = await put(`uploads/${userId}/${Date.now()}_${file.name}`, file, {
       access: 'public',
     });
+
+    console.log('Upload successful:', blob.url);
 
     // Create document record in database
     const document = await createDocument({
@@ -77,8 +82,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ document });
   } catch (error) {
     console.error('Error uploading document:', error);
+    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { error: 'Failed to upload document' },
+      {
+        error: 'Failed to upload document',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
@@ -91,34 +101,47 @@ async function processDocumentAsync(
   userId: string
 ) {
   try {
+    console.log(`[PROCESSING] Starting to process document ${documentId}`);
+
     // Download file
+    console.log(`[PROCESSING] Downloading file from ${fileUrl}`);
     const response = await fetch(fileUrl);
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    console.log(`[PROCESSING] File downloaded, size: ${buffer.length} bytes`);
 
     // Extract text
+    console.log(`[PROCESSING] Extracting text from ${fileName}`);
     let text = await extractTextFromFile(buffer, fileName);
     text = preprocessText(text);
+    console.log(`[PROCESSING] Text extracted, length: ${text.length} characters`);
 
     if (!text || text.length === 0) {
       throw new Error('No text content found in document');
     }
 
     // Chunk text
+    console.log(`[PROCESSING] Chunking text...`);
     const chunks = chunkText(text, 1000, 200);
+    console.log(`[PROCESSING] Created ${chunks.length} chunks`);
 
     // Generate embeddings and upsert to Pinecone
+    console.log(`[PROCESSING] Generating embeddings and upserting to Pinecone...`);
     const vectorCount = await upsertVectors(userId, documentId, chunks, fileName);
+    console.log(`[PROCESSING] Upserted ${vectorCount} vectors to Pinecone`);
 
     // Update document status to ready
+    console.log(`[PROCESSING] Updating document status to ready...`);
     await updateDocumentStatus(documentId, 'ready', {
       chunk_count: chunks.length,
       text_length: text.length,
     });
 
-    console.log(`Document ${documentId} processed successfully. ${vectorCount} vectors created.`);
+    console.log(`[PROCESSING] ✅ Document ${documentId} processed successfully. ${vectorCount} vectors created.`);
   } catch (error) {
-    console.error(`Error processing document ${documentId}:`, error);
+    console.error(`[PROCESSING] ❌ Error processing document ${documentId}:`, error);
+    console.error('[PROCESSING] Error details:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('[PROCESSING] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     await updateDocumentStatus(documentId, 'error', {
       error: error instanceof Error ? error.message : 'Unknown error',
     });

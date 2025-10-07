@@ -34,6 +34,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
   const response = await client.embeddings.create({
     model: 'text-embedding-3-small',
     input: text,
+    dimensions: 768, // Match Pinecone index dimension
   });
 
   return response.data[0].embedding;
@@ -152,7 +153,7 @@ Instructions:
 2. If you don't find relevant information, clearly state that
 3. Include specific citations when appropriate
 4. Be concise but informative
-5. Respond in Spanish
+5. Respond in English
 6. If information is incomplete, mention what's missing`,
       },
       {
@@ -190,7 +191,7 @@ Instructions:
 2. If you don't find relevant information, clearly state that
 3. Include specific citations when appropriate
 4. Be concise but informative
-5. Respond in Spanish
+5. Respond in English
 6. If information is incomplete, mention what's missing`,
       },
       {

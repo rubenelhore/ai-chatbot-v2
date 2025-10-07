@@ -90,6 +90,9 @@ export async function updateDocumentStatus(
     text_length?: number;
   }
 ): Promise<Document> {
+  const now = new Date().toISOString();
+  const processedAt = (status === 'ready' || status === 'error') ? now : null;
+
   const result = await sql<Document>`
     UPDATE documents
     SET
@@ -97,7 +100,7 @@ export async function updateDocumentStatus(
       error = ${updates?.error || null},
       chunk_count = COALESCE(${updates?.chunk_count || null}, chunk_count),
       text_length = COALESCE(${updates?.text_length || null}, text_length),
-      processed_at = ${status === 'ready' || status === 'error' ? 'CURRENT_TIMESTAMP' : null}
+      processed_at = ${processedAt}
     WHERE id = ${id}
     RETURNING *
   `;
@@ -133,7 +136,7 @@ export async function createChat(data: {
       ${data.conversation_id || null},
       ${data.query},
       ${data.response},
-      ${JSON.stringify(data.document_ids)},
+      ${data.document_ids},
       ${data.sources ? JSON.stringify(data.sources) : null}
     )
     RETURNING *

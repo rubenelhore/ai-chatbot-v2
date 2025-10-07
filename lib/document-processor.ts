@@ -1,5 +1,4 @@
 import mammoth from 'mammoth';
-import * as pdfParse from 'pdf-parse';
 
 export async function extractTextFromFile(
   buffer: Buffer,
@@ -9,9 +8,10 @@ export async function extractTextFromFile(
 
   switch (fileExtension) {
     case 'pdf':
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pdf = pdfParse as any;
-      const pdfData = await pdf.default(buffer);
+      // Dynamic import for pdf-parse (CommonJS module)
+      const pdfParseModule = await import('pdf-parse') as any;
+      // Use the 'pdf' named export
+      const pdfData = await pdfParseModule.pdf(buffer);
       return pdfData.text;
 
     case 'docx':
@@ -56,9 +56,15 @@ export function chunkText(
       }
     }
 
-    chunks.push(chunk.trim());
-    start += chunk.length - overlap;
+    const trimmedChunk = chunk.trim();
+    if (trimmedChunk.length > 0) {
+      chunks.push(trimmedChunk);
+    }
+
+    // Ensure we always move forward to avoid infinite loop
+    const step = Math.max(chunk.length - overlap, 1);
+    start += step;
   }
 
-  return chunks.filter((chunk) => chunk.length > 0);
+  return chunks;
 }

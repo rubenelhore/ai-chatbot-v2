@@ -28,6 +28,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate conversationId is a valid UUID or null
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const validConversationId = conversationId && uuidRegex.test(conversationId) ? conversationId : null;
+
     console.log(`Processing chat query for user ${userId}:`, query);
 
     // Query Pinecone for relevant document chunks
@@ -41,7 +45,7 @@ export async function POST(request: NextRequest) {
     // Handle no results
     if (!searchResults.matches || searchResults.matches.length === 0) {
       const noResultsResponse = {
-        response: 'No encontré información relevante en los documentos proporcionados para responder tu pregunta.',
+        response: 'I could not find relevant information in the provided documents to answer your question.',
         sources: [],
         chatId: '',
       };
@@ -71,7 +75,7 @@ export async function POST(request: NextRequest) {
     // Save chat to database
     const chat = await createChat({
       user_id: userId,
-      conversation_id: conversationId,
+      conversation_id: validConversationId,
       query,
       response,
       document_ids: documentIds,
@@ -85,8 +89,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error in chat query:', error);
+    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { error: 'Failed to process chat query' },
+      {
+        error: 'Failed to process chat query',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

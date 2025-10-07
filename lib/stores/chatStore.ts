@@ -37,7 +37,7 @@ export const useChatStore = create<ChatStore>()(
         {
           id: 'welcome',
           type: 'assistant',
-          content: '¡Hola! Soy tu asistente de documentos. Sube archivos y hazme cualquier pregunta sobre su contenido. Puedo ayudarte a encontrar información específica, resumir contenido y responder preguntas basadas en tus documentos.',
+          content: 'Hello! I\'m your document assistant. Upload files and ask me any questions about their content. I can help you find specific information, summarize content, and answer questions based on your documents.',
           timestamp: new Date(),
         },
       ],
@@ -107,7 +107,7 @@ export const useChatStore = create<ChatStore>()(
           console.error('Error sending query:', error);
           addMessage({
             type: 'assistant',
-            content: 'Lo siento, hubo un error procesando tu pregunta. Por favor, intenta de nuevo.',
+            content: 'Sorry, there was an error processing your question. Please try again.',
             isError: true,
           });
         } finally {
@@ -125,7 +125,7 @@ export const useChatStore = create<ChatStore>()(
             {
               id: 'welcome',
               type: 'assistant',
-              content: '¡Hola! Soy tu asistente de documentos. Sube archivos y hazme cualquier pregunta sobre su contenido.',
+              content: 'Hello! I\'m your document assistant. Upload files and ask me any questions about their content.',
               timestamp: new Date(),
             },
           ],
@@ -139,7 +139,7 @@ export const useChatStore = create<ChatStore>()(
             {
               id: 'welcome',
               type: 'assistant',
-              content: '¡Nueva conversación iniciada! ¿En qué puedo ayudarte hoy?',
+              content: 'New conversation started! How can I help you today?',
               timestamp: new Date(),
             },
           ],
