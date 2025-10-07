@@ -87,6 +87,7 @@ export default function Home() {
           <p className="text-gray-300 mb-6">
             Chat with your documents using AI. Powered by OpenAI, PostgreSQL and Vercel.
           </p>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/auth/login"
             className="block w-full bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-center"
@@ -108,6 +109,7 @@ export default function Home() {
           <h1 className="text-2xl font-bold text-purple-600">AI Document Chat</h1>
           <div className="flex items-center gap-4">
             <span className="text-gray-600">{user.email}</span>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/auth/logout"
               className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
