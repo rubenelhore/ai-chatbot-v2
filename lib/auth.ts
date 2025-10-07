@@ -22,9 +22,10 @@ export async function syncUserWithDatabase(user: {
 
     if (existingUser.rows.length === 0) {
       // Create new user
+      const now = new Date().toISOString();
       const newUser = await sql`
         INSERT INTO users (email, name, image, email_verified)
-        VALUES (${user.email}, ${user.name || null}, ${user.picture || null}, CURRENT_TIMESTAMP)
+        VALUES (${user.email}, ${user.name || null}, ${user.picture || null}, ${now})
         RETURNING id
       `;
       userId = newUser.rows[0].id;
