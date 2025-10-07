@@ -26,7 +26,11 @@ export async function sql<T = any>(
   if (isVercelPostgres) {
     // Use Vercel Postgres in production
     const { sql: vercelSql } = await import('@vercel/postgres');
-    return vercelSql(strings, ...values);
+    const result = await vercelSql(strings, ...values);
+    return {
+      rows: result.rows as T[],
+      rowCount: result.rowCount,
+    };
   } else {
     // Use pg Pool for local development
     const client = getPool();
@@ -46,7 +50,7 @@ export async function sql<T = any>(
 
     const result = await client.query(query, params);
     return {
-      rows: result.rows,
+      rows: result.rows as T[],
       rowCount: result.rowCount,
     };
   }
