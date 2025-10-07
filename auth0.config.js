@@ -1,8 +1,14 @@
 module.exports = {
+  baseURL: process.env.AUTH0_BASE_URL,
+  issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+  clientID: process.env.AUTH0_CLIENT_ID,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET,
+  secret: process.env.AUTH0_SECRET,
   routes: {
-    login: '/auth/login',
-    callback: '/auth/callback',
-    logout: '/auth/logout',
+    login: '/api/auth/login',
+    callback: '/api/auth/callback',
+    logout: '/api/auth/logout',
+    postLogoutRedirect: '/',
   },
   session: {
     name: 'appSession',
@@ -13,14 +19,9 @@ module.exports = {
       path: '/',
       transient: false,
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     },
   },
   auth0Logout: true,
-  baseURL: process.env.AUTH0_BASE_URL,
-  issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-  clientID: process.env.AUTH0_CLIENT_ID,
-  clientSecret: process.env.AUTH0_CLIENT_SECRET,
-  secret: process.env.AUTH0_SECRET,
 };
