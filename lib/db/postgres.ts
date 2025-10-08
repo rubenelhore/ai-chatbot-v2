@@ -34,22 +34,21 @@ export async function sql<T = any>(
 
   if (useNeon) {
     // Use Neon serverless driver in production
-    const sqlClient = neon(process.env.POSTGRES_URL!);
+    const sqlClient = neon(process.env.POSTGRES_URL!, {
+      fullResults: true,
+    });
 
-    // Build the query from template literal
+    // Build parameterized query
     let query = strings[0];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const params: any[] = [];
-
     for (let i = 0; i < values.length; i++) {
-      params.push(values[i]);
       query += `$${i + 1}${strings[i + 1]}`;
     }
 
-    const result = await sqlClient(query, params);
+    // @ts-expect-error - Neon types are complex, but this works at runtime
+    const result = await sqlClient(query, values);
     return {
-      rows: result as T[],
-      rowCount: result.length,
+      rows: result.rows as T[],
+      rowCount: result.rowCount,
     };
   } else {
     // Use pg Pool for local development
