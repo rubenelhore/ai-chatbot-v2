@@ -51,16 +51,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload to Vercel Blob Storage
-    console.log('Attempting to upload to Vercel Blob...');
-    console.log('BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN);
+    console.log('[UPLOAD] Attempting to upload to Vercel Blob...');
+    console.log('[UPLOAD] BLOB_READ_WRITE_TOKEN exists:', !!process.env.BLOB_READ_WRITE_TOKEN);
+    console.log('[UPLOAD] File size:', file.size, 'bytes');
 
     const blob = await put(`uploads/${userId}/${Date.now()}_${file.name}`, file, {
       access: 'public',
     });
 
-    console.log('Upload successful:', blob.url);
+    console.log('[UPLOAD] Blob upload successful:', blob.url);
 
     // Create document record in database
+    console.log('[UPLOAD] Creating document record in database...');
     const document = await createDocument({
       user_id: userId,
       name: file.name,
