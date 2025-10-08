@@ -11,6 +11,7 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.10.0",
     "@google/generative-ai": "^0.24.1",
+    "@neondatabase/serverless": "^1.0.2",
     "@pinecone-database/pinecone": "^6.1.2",
     "@types/pg": "^8.15.5",
     "@vercel/blob": "^2.0.0",
