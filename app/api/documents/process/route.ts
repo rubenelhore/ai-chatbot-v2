@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth0 } from '@/lib/auth';
 import { updateDocumentStatus } from '@/lib/db';
 import { extractTextFromFile, preprocessText, chunkText } from '@/lib/document-processor';
 import { upsertVectors } from '@/lib/ai';
@@ -7,13 +6,6 @@ import { upsertVectors } from '@/lib/ai';
 export async function POST(request: NextRequest) {
   try {
     console.log('[PROCESS] Starting document processing...');
-
-    const session = await auth0.getSession();
-
-    if (!session?.user) {
-      console.log('[PROCESS] No session found');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const body = await request.json();
     const { documentId, fileUrl, fileName, userId } = body;
