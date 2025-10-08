@@ -73,17 +73,29 @@ export const useDocuments = () => {
       const formData = new FormData();
       formData.append('file', file);
 
+      console.log('[uploadDocument] Uploading file:', file.name);
+
       const response = await fetch('/api/documents/upload', {
         method: 'POST',
         body: formData,
       });
 
+      console.log('[uploadDocument] Response status:', response.status);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Upload failed');
+        const errorText = await response.text();
+        console.error('[uploadDocument] Error response:', errorText);
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          throw new Error('Upload failed: ' + response.statusText);
+        }
+        throw new Error(errorData.error || 'Upload failed');
       }
 
       const data = await response.json();
+      console.log('[uploadDocument] Upload successful:', data);
 
       // Add to local state immediately
       setDocuments((prev) => [data.document, ...prev]);
