@@ -34,7 +34,16 @@ export async function sql<T = any>(
 
   if (useNeon) {
     // Use Neon serverless driver in production
-    const sql = neon(process.env.POSTGRES_URL!, {
+    // Use POSTGRES_URL (not POSTGRES_URL_NON_POOLING) for serverless
+    const connectionString = process.env.POSTGRES_URL;
+
+    if (!connectionString) {
+      throw new Error('POSTGRES_URL environment variable is not set');
+    }
+
+    console.log('[postgres] Connecting to Neon with URL:', connectionString.substring(0, 30) + '...');
+
+    const sql = neon(connectionString, {
       fullResults: true,
     });
 
