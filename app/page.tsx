@@ -8,7 +8,7 @@ import { useDropzone } from 'react-dropzone';
 import toast from 'react-hot-toast';
 
 export default function Home() {
-  // Force cache bust v3
+  // Build timestamp: 2025-10-08T19:35:00Z
   const { user, isLoading: authLoading } = useUser();
   const {
     documents,
