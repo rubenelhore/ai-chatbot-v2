@@ -1,11 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+  try {
+    console.log('[UPLOAD] Starting upload process...');
+
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+
+    if (!file) {
+      console.log('[UPLOAD] No file provided');
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    }
+
+    console.log('[UPLOAD] File received:', file.name, file.size, file.type);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Upload endpoint is working!',
+      file: {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      }
+    });
+  } catch (error) {
+    console.error('[UPLOAD] Error:', error);
+    return NextResponse.json(
+      { error: 'Upload failed', details: error instanceof Error ? error.message : 'Unknown' },
+      { status: 500 }
+    );
+  }
+}
+
+/*
+// ORIGINAL CODE - TEMPORARILY DISABLED FOR DEBUGGING
 import { auth0, syncUserWithDatabase } from '@/lib/auth';
 import { put } from '@vercel/blob';
 import { createDocument, updateDocumentStatus } from '@/lib/db';
 import { extractTextFromFile, preprocessText, chunkText } from '@/lib/document-processor';
 import { upsertVectors } from '@/lib/ai';
 
-export async function POST(request: NextRequest) {
+export async function POST_ORIGINAL(request: NextRequest) {
   try {
     const session = await auth0.getSession();
 
@@ -149,3 +184,4 @@ async function processDocumentAsync(
     });
   }
 }
+*/
