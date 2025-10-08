@@ -34,18 +34,12 @@ export async function sql<T = any>(
 
   if (useNeon) {
     // Use Neon serverless driver in production
-    const sqlClient = neon(process.env.POSTGRES_URL!, {
+    const sql = neon(process.env.POSTGRES_URL!, {
       fullResults: true,
     });
 
-    // Build parameterized query
-    let query = strings[0];
-    for (let i = 0; i < values.length; i++) {
-      query += `$${i + 1}${strings[i + 1]}`;
-    }
-
-    // @ts-expect-error - Neon types are complex, but this works at runtime
-    const result = await sqlClient(query, values);
+    // Call Neon as a tagged template function
+    const result = await sql(strings, ...values);
     return {
       rows: result.rows as T[],
       rowCount: result.rowCount,
