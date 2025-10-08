@@ -34,14 +34,19 @@ export async function sql<T = any>(
 
   if (useNeon) {
     // Use Neon serverless driver in production
-    // Use POSTGRES_URL (not POSTGRES_URL_NON_POOLING) for serverless
-    const connectionString = process.env.POSTGRES_URL;
+    // Try both DATABASE_URL and POSTGRES_URL (Neon convention vs Vercel convention)
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
     if (!connectionString) {
-      throw new Error('POSTGRES_URL environment variable is not set');
+      console.error('[postgres] Environment variables:', {
+        DATABASE_URL: process.env.DATABASE_URL ? 'set' : 'NOT SET',
+        POSTGRES_URL: process.env.POSTGRES_URL ? 'set' : 'NOT SET',
+        POSTGRES_PRISMA_URL: process.env.POSTGRES_PRISMA_URL ? 'set' : 'NOT SET',
+      });
+      throw new Error('No database connection string found. Set DATABASE_URL or POSTGRES_URL.');
     }
 
-    console.log('[postgres] Connecting to Neon with URL:', connectionString.substring(0, 30) + '...');
+    console.log('[postgres] Connecting to Neon with URL:', connectionString.substring(0, 50) + '...');
 
     const sql = neon(connectionString, {
       fullResults: true,
