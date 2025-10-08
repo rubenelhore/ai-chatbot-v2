@@ -1,19 +1,25 @@
 // Database client that works with both local PostgreSQL and Vercel Postgres
 import { Pool } from 'pg';
 
-// Check if we're using Vercel Postgres (has specific connection string format)
-const isVercelPostgres = process.env.POSTGRES_URL?.includes('neon.tech') ||
-                         process.env.POSTGRES_URL?.includes('vercel-storage');
-
 let pool: Pool | null = null;
 
 function getPool() {
-  if (!pool && !isVercelPostgres) {
+  if (!pool) {
     pool = new Pool({
       connectionString: process.env.POSTGRES_URL,
     });
   }
   return pool;
+}
+
+// Check if we're in Vercel environment (runtime check)
+function isVercelEnvironment() {
+  // Check for Vercel environment variable
+  if (process.env.VERCEL === '1') return true;
+
+  // Check if POSTGRES_URL points to Neon/Vercel
+  const url = process.env.POSTGRES_URL || '';
+  return url.includes('neon.tech') || url.includes('vercel-storage');
 }
 
 // Template literal tag function that mimics @vercel/postgres sql API
@@ -23,8 +29,14 @@ export async function sql<T = any>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...values: any[]
 ): Promise<{ rows: T[]; rowCount: number | null }> {
-  if (isVercelPostgres) {
+  const useVercelPostgres = isVercelEnvironment();
+
+  console.log('[postgres] Using Vercel Postgres:', useVercelPostgres);
+  console.log('[postgres] POSTGRES_URL:', process.env.POSTGRES_URL?.substring(0, 50) + '...');
+
+  if (useVercelPostgres) {
     // Use Vercel Postgres in production
+    console.log('[postgres] Using @vercel/postgres');
     const { sql: vercelSql } = await import('@vercel/postgres');
     const result = await vercelSql(strings, ...values);
     return {
@@ -32,6 +44,7 @@ export async function sql<T = any>(
       rowCount: result.rowCount,
     };
   } else {
+    console.log('[postgres] Using pg Pool');
     // Use pg Pool for local development
     const client = getPool();
     if (!client) {
