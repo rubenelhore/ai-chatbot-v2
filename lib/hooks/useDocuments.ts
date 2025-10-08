@@ -150,7 +150,7 @@ export const useDocuments = () => {
 
   const getProcessingDocuments = () => {
     return documents.filter((doc) =>
-      ['uploading', 'processing'].includes(doc.status)
+      doc && ['uploading', 'processing'].includes(doc.status)
     );
   };
 

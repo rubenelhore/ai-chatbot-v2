@@ -180,7 +180,7 @@ export default function Home() {
               ))}
 
               {/* Show processing documents */}
-              {documents.filter(d => d.status === 'uploading' || d.status === 'processing').map((doc) => (
+              {documents.filter(d => d && (d.status === 'uploading' || d.status === 'processing')).map((doc) => (
                 <div
                   key={doc.id}
                   className="p-3 rounded-lg bg-yellow-50 border border-yellow-200"
