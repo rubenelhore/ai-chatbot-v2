@@ -88,9 +88,11 @@ export async function POST(request: NextRequest) {
     console.log('[UPLOAD] Returning document to client');
 
     // Trigger async processing via HTTP call (avoids import issues)
-    const baseUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000';
+    const host = request.headers.get('host') || 'ai-chatbot-v2-three.vercel.app';
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const baseUrl = `${protocol}://${host}`;
+
+    console.log('[UPLOAD] Triggering processing at:', `${baseUrl}/api/documents/process`);
 
     fetch(`${baseUrl}/api/documents/process`, {
       method: 'POST',
