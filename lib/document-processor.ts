@@ -1,4 +1,5 @@
 import mammoth from 'mammoth';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 export async function extractTextFromFile(
   buffer: Buffer,
@@ -8,12 +9,22 @@ export async function extractTextFromFile(
 
   switch (fileExtension) {
     case 'pdf':
-      // Dynamic import for pdf-parse (CommonJS module)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pdfParseModule = await import('pdf-parse') as any;
-      // Use the 'pdf' named export
-      const pdfData = await pdfParseModule.pdf(buffer);
-      return pdfData.text;
+      // Use pdfjs-dist for serverless compatibility
+      const uint8Array = new Uint8Array(buffer);
+      const loadingTask = pdfjs.getDocument({ data: uint8Array });
+      const pdf = await loadingTask.promise;
+
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(' ');
+        fullText += pageText + '\n';
+      }
+
+      return fullText;
 
     case 'docx':
       const result = await mammoth.extractRawText({ buffer });
