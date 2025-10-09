@@ -22,7 +22,7 @@ export interface Document {
 export const useDocuments = () => {
   const { user } = useUser();
   const [documents, setDocuments] = useState<Document[]>([]);
-  // Cache bust timestamp: 2025-10-08T19:35:00Z
+  // Cache bust: 2025-10-09T17:20:00Z
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
