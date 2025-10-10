@@ -12,12 +12,9 @@ export const config = {
      */
     '/api/auth/:path*',
     /*
-     * Match all other request paths except:
-     * - /api/* (other API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * Match page routes only (not API routes, static files, etc.)
+     * This protects pages while leaving other API routes unaffected
      */
-    '/((?!api/(?!auth)|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };
