@@ -90,7 +90,7 @@ export default function Home() {
           </p>
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
-            href="/auth/login"
+            href="/api/auth/login"
             className="block w-full bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-center"
           >
             Sign in with Auth0
@@ -112,7 +112,7 @@ export default function Home() {
             <span className="text-gray-600">{user.email}</span>
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
-              href="/auth/logout"
+              href="/api/auth/logout"
               className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
             >
               Sign out
