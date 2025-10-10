@@ -5,6 +5,5 @@ export const auth0 = new Auth0Client({
     callback: '/api/auth/callback',
     login: '/api/auth/login',
     logout: '/api/auth/logout',
-    postLogoutRedirect: '/',
   },
 });
