@@ -6,6 +6,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Match /api/auth/* routes for Auth0 to handle login, logout, callback
-  matcher: ['/api/auth/login', '/api/auth/logout', '/api/auth/callback', '/api/auth/me'],
+  // Match /auth/* routes (Auth0 default paths)
+  matcher: ['/auth/login', '/auth/logout', '/auth/callback', '/auth/me'],
 };
