@@ -250,3 +250,4 @@ MIT
 - Built as a migration from Firebase to Vercel stack
 - Demonstrates real-world full-stack development
 - Great portfolio piece for junior/mid-level developers
+<!-- Updated for v4 deployment -->
