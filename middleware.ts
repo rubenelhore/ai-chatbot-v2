@@ -6,5 +6,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/auth/:path*',
+  matcher: ['/auth/login', '/auth/logout', '/auth/callback', '/auth/profile', '/auth/access-token', '/auth/backchannel-logout'],
 };
