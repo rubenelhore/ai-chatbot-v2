@@ -2,7 +2,11 @@ import type { NextRequest } from 'next/server';
 import { auth0 } from './lib/auth0';
 
 export async function middleware(request: NextRequest) {
-  return await auth0.middleware(request);
+  // Only run Auth0 middleware on /auth/* routes
+  if (request.nextUrl.pathname.startsWith('/auth/')) {
+    return await auth0.middleware(request);
+  }
+  // For all other routes, let them pass through
 }
 
 export const config = {
