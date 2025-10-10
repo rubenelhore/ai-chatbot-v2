@@ -2,10 +2,12 @@ import type { NextRequest } from 'next/server';
 import { auth0 } from './lib/auth0';
 
 export async function middleware(request: NextRequest) {
-  return await auth0.middleware(request);
+  // Only run on /auth/* routes
+  if (request.nextUrl.pathname.startsWith('/auth/')) {
+    return await auth0.middleware(request);
+  }
 }
 
 export const config = {
-  // Match /auth/* routes (Auth0 default paths)
-  matcher: ['/auth/login', '/auth/logout', '/auth/callback', '/auth/me'],
+  matcher: '/((?!_next/static|_next/image|favicon.ico).*)',
 };
